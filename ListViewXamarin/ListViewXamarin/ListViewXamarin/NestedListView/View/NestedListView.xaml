@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:ListViewSample"
+             xmlns:listView="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms"
+             xmlns:dataSource="clr-namespace:Syncfusion.DataSource;assembly=Syncfusion.DataSource.Portable"
+             x:Class="ListViewSample.NestedListView">
+    <ContentPage.BindingContext>
+        <local:NestedListViewViewModel x:Name="viewModel" />
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:HeightConverter x:Key="heightConverter"/>
+            <local:RotationConverter x:Key="rotationConverter"/>
+            <local:TextConverter x:Key="textConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Content>
+        <Grid>
+            <listView:SfListView x:Name="outerListView" ItemsSource="{Binding ContactInfo}" AutoFitMode="DynamicHeight">
+                <listView:SfListView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid BackgroundColor="#f4f4f2" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="50"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid BackgroundColor="#5c6e91">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Button Text="^" Rotation="{Binding IsInnerListVisible, Converter={StaticResource rotationConverter}}" Command="{Binding Path=BindingContext.OuterListTapCommand, Source={x:Reference outerListView}}" CommandParameter="{Binding .}" TextColor="WhiteSmoke" BackgroundColor="Transparent" FontAttributes="Bold" FontSize="20" Padding="10,0,0,0" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand"/>
+                                <Label Text="{Binding Location}" Grid.Column="1" Padding="10,0,0,0" VerticalOptions="Center" FontAttributes="Bold"/>
+                            </Grid>
+                            <listView:SfListView x:Name="innerListView" Margin="5" Grid.Row="1" IsScrollingEnabled="False" IsVisible="{Binding IsInnerListVisible}" ItemsSource="{Binding ContactDetails}" AutoFitMode="DynamicHeight">
+                                <listView:SfListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid x:Name="grid" RowSpacing="1" BackgroundColor="#bbbfca">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="70" />
+                                                <RowDefinition Height="Auto"/>
+                                            </Grid.RowDefinitions>
+                                            <Grid RowSpacing="1">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="50" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="70" />
+                                                </Grid.ColumnDefinitions>
+                                                <Image Source="{Binding ContactImage}" VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="50"/>
+                                                <Grid Grid.Column="1" RowSpacing="1" Padding="10,0,0,0" VerticalOptions="Center">
+                                                    <Label LineBreakMode="NoWrap" TextColor="#474747" Text="{Binding ContactName}">
+                                                        <Label.FontSize>
+                                                            <OnPlatform x:TypeArguments="x:Double">
+                                                                <OnPlatform.WinPhone>
+                                                                    <OnIdiom x:TypeArguments="x:Double" Phone="18" Tablet="20" />
+                                                                </OnPlatform.WinPhone>
+                                                                <OnPlatform.Android>
+                                                                    <OnIdiom x:TypeArguments="x:Double" Phone="16" Tablet="18" />
+                                                                </OnPlatform.Android>
+                                                                <OnPlatform.iOS>
+                                                                    <OnIdiom x:TypeArguments="x:Double" Phone="16" Tablet="18" />
+                                                                </OnPlatform.iOS>
+                                                            </OnPlatform>
+                                                        </Label.FontSize>
+                                                    </Label>
+                                                    <Label Grid.Row="1" Grid.Column="0" TextColor="#474747" LineBreakMode="NoWrap" Text="{Binding ContactNumber}">
+                                                        <Label.FontSize>
+                                                            <OnPlatform x:TypeArguments="x:Double">
+                                                                <OnPlatform.WinPhone>
+                                                                    <OnIdiom x:TypeArguments="x:Double" Phone="12" Tablet="12" />
+                                                                </OnPlatform.WinPhone>
+                                                                <OnPlatform.Android>
+                                                                    <OnIdiom x:TypeArguments="x:Double" Phone="12" Tablet="14" />
+                                                                </OnPlatform.Android>
+                                                                <OnPlatform.iOS>
+                                                                    <OnIdiom x:TypeArguments="x:Double" Phone="12" Tablet="14" />
+                                                                </OnPlatform.iOS>
+                                                            </OnPlatform>
+                                                        </Label.FontSize>
+                                                    </Label>
+                                                </Grid>
+                                                <Button Text="{Binding IsSubListVisible, Converter={StaticResource textConverter}}" Command="{Binding Path=BindingContext.InnerListTapCommand, Source={x:Reference innerListView}}" CommandParameter="{Binding .}" BackgroundColor="Transparent" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" FontSize="20" Grid.Column="2" />
+                                            </Grid>
+                                            <listView:SfListView x:Name="SubListView" IsVisible="{Binding IsSubListVisible}" Margin="5" ItemsSource="{Binding Members}" Grid.Row="1" HeightRequest="{Binding Converter={StaticResource heightConverter}, ConverterParameter={x:Reference SubListView}}" ItemSize="50" BackgroundColor="#f4f4f2">
+                                                <listView:SfListView.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid Padding="10,0,0,0">
+                                                            <Label Text="{Binding Name}" VerticalOptions="CenterAndExpand"/>
+                                                        </Grid>
+                                                    </DataTemplate>
+                                                </listView:SfListView.ItemTemplate>
+                                            </listView:SfListView>
+                                        </Grid>
+                                    </DataTemplate>
+                                </listView:SfListView.ItemTemplate>
+                            </listView:SfListView>
+                        </Grid>
+                    </DataTemplate>
+                </listView:SfListView.ItemTemplate>
+            </listView:SfListView>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>
